@@ -1,31 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCreateMusulliMutation } from "@/redux/features/musulliSlice/musulliSlice";
-import { useGetMyMosqueQuery } from "@/redux/features/mosqueSlice/mosqueSlice";
-import type { CreateMusulliPayload } from "@/types/musulliType";
+import { useParams, useRouter } from "next/navigation";
+import {
+  useGetSingleMusulliQuery,
+  useUpdateMusulliMutation,
+} from "@/redux/features/musulliSlice/musulliSlice";
+import type { UpdateMusulliPayload } from "@/types/musulliType";
 import type { ApiError } from "@/types/errorType";
 
-export default function CreateMusulliPage() {
+export default function EditMusulliPage() {
+  const params = useParams();
   const router = useRouter();
-  const [createMusulli, { isLoading }] = useCreateMusulliMutation();
-  const { data: mosqueData } = useGetMyMosqueQuery();
+  const id = params.id as string;
 
-  const today = new Date().toISOString().split("T")[0];
+  const {
+    data: musulliData,
+    isLoading: isLoadingMusulli,
+    error: musulliError,
+  } = useGetSingleMusulliQuery(id);
+  const [updateMusulli, { isLoading: isUpdating }] = useUpdateMusulliMutation();
 
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    monthlyFee: 0,
-    joinedAt: today,
-  });
-
+  const [form, setForm] = useState<UpdateMusulliPayload>({});
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (musulliData?.data) {
+      const data = musulliData.data;
+      setForm({
+        name: data.name,
+        phone: data.phone,
+        address: data.address,
+        monthlyFee: data.monthlyFee,
+        joinedAt: data.joinedAt.split("T")[0],
+      });
+    }
+  }, [musulliData]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -41,20 +54,48 @@ export default function CreateMusulliPage() {
     e.preventDefault();
     setError(null);
     try {
-      const payload = {
-        ...form,
-        mosqueId: mosqueData?.data?.id as string,
-      };
-      await createMusulli(payload).unwrap();
+      await updateMusulli({ id, ...form }).unwrap();
       setShowSuccess(true);
-      setTimeout(() => router.push("/my-mosque"), 1500);
+      setTimeout(() => router.push("/my-mosque/musulli-data"), 1500);
     } catch (err: unknown) {
       const apiError = err as { data?: ApiError };
       setError(
-        apiError.data?.message || "Failed to create musulli. Please try again.",
+        apiError.data?.message || "Failed to update musulli. Please try again.",
       );
     }
   };
+
+  if (isLoadingMusulli) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f3ef]">
+        <div className="text-center">
+          <div className="animate-spin w-12 h-12 border-4 border-[#8a7340] border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading musulli data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (musulliError || !musulliData?.data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f3ef]">
+        <div className="text-center max-w-md">
+          <h2 className="text-2xl font-bold text-[#2c2416] mb-2">
+            Musulli Not Found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            The musulli youre trying to edit doesnt exist or you dont have
+            permission to access it.
+          </p>
+          <Link href="/my-mosque/musulli-data">
+            <button className="bg-[#8a7340] hover:bg-[#7a6330] text-white px-6 py-3 rounded-lg font-semibold">
+              Back to Musulli List
+            </button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-[#f5f3ef]">
@@ -85,10 +126,10 @@ export default function CreateMusulliPage() {
 
           {/* Heading */}
           <h1 className="text-[2rem] font-bold text-[#2c2416] leading-tight mb-1">
-            Add New Musulli
+            Edit Musulli
           </h1>
           <p className="text-sm text-gray-500 mb-8">
-            Register a new member to your mosque
+            Update {form.name}&apos; information
           </p>
 
           {/* Success Banner */}
@@ -101,7 +142,7 @@ export default function CreateMusulliPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              Musulli created successfully! Redirecting…
+              Musulli updated successfully! Redirecting…
             </div>
           )}
 
@@ -129,7 +170,7 @@ export default function CreateMusulliPage() {
               <input
                 type="text"
                 name="name"
-                value={form.name}
+                value={form.name || ""}
                 onChange={handleChange}
                 required
                 placeholder="e.g. Abdul Karim"
@@ -145,7 +186,7 @@ export default function CreateMusulliPage() {
               <input
                 type="text"
                 name="phone"
-                value={form.phone}
+                value={form.phone || ""}
                 onChange={handleChange}
                 required
                 placeholder="e.g. 01712345678"
@@ -161,7 +202,7 @@ export default function CreateMusulliPage() {
               <input
                 type="text"
                 name="address"
-                value={form.address}
+                value={form.address || ""}
                 onChange={handleChange}
                 required
                 placeholder="e.g. Dhaka"
@@ -193,7 +234,7 @@ export default function CreateMusulliPage() {
               <input
                 type="date"
                 name="joinedAt"
-                value={form.joinedAt}
+                value={form.joinedAt || ""}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-[#fafaf8] text-[#2c2416] placeholder-gray-400 text-sm focus:outline-none focus:border-[#c8a84b] focus:ring-2 focus:ring-[#c8a84b]/20 transition"
@@ -203,10 +244,10 @@ export default function CreateMusulliPage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={isLoading || showSuccess}
+              disabled={isUpdating || showSuccess}
               className="w-full py-3.5 rounded-lg bg-[#8a7340] hover:bg-[#7a6330] text-white font-semibold text-sm tracking-wide shadow-lg shadow-[#8a7340]/30 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed mt-1"
             >
-              {isLoading ? (
+              {isUpdating ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg
                     className="animate-spin w-4 h-4"
@@ -227,10 +268,10 @@ export default function CreateMusulliPage() {
                       d="M4 12a8 8 0 018-8v8H4z"
                     />
                   </svg>
-                  Creating musulli…
+                  Updating musulli…
                 </span>
               ) : (
-                "Add Musulli"
+                "Update Musulli"
               )}
             </button>
           </form>
@@ -242,12 +283,12 @@ export default function CreateMusulliPage() {
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
-          {/* Back to My Mosque */}
+          {/* Back to Musulli List */}
           <Link
-            href="/my-mosque"
+            href="/my-mosque/musulli-data"
             className="block text-center py-3 rounded-lg border border-[#c8a84b]/60 text-[#8a7340] font-semibold text-sm hover:bg-[#fdf8ed] transition"
           >
-            Back to My Mosque
+            Back to Musulli List
           </Link>
         </div>
       </div>

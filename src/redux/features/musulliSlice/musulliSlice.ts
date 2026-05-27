@@ -1,11 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { baseApi } from '../apiSlice/apiSlice';
-import type { Musulli, CreateMusulliPayload } from '@/types/musulliType';
+import type { 
+  Musulli, 
+  CreateMusulliPayload,
+  UpdateMusulliPayload,
+  CreateMonthlyPaymentPayload,
+  CollectFeePayload
+} from '@/types/musulliType';
+
+interface GetMusullisResponse {
+  success: boolean;
+  message: string;
+  data: Musulli[];
+}
 
 export const musulliApi = baseApi.injectEndpoints({
-  endpoints: (builder: any) => ({
-    createMusulli: builder.mutation<{ success: boolean; message: string; data: Musulli }, CreateMusulliPayload>({
+  endpoints: (builder) => ({
+    createMusulli: builder.mutation({
       query: (payload: CreateMusulliPayload) => ({
         url: '/musullis',
         method: 'POST',
@@ -14,7 +26,7 @@ export const musulliApi = baseApi.injectEndpoints({
       invalidatesTags: ['Musulli'],
     }),
 
-    getMusullis: builder.query({
+    getMusullis: builder.query<GetMusullisResponse, void>({
       query: () => ({
         url: '/musullis',
         method: 'GET',
@@ -37,7 +49,7 @@ export const musulliApi = baseApi.injectEndpoints({
     }),
 
     updateMusulli: builder.mutation({
-      query: ({ id, ...payload }: any) => ({
+      query: ({ id, ...payload }: { id: string } & UpdateMusulliPayload) => ({
         url: `/musullis/${id}`,
         method: 'PUT',
         body: payload,
@@ -47,6 +59,51 @@ export const musulliApi = baseApi.injectEndpoints({
         { type: 'Musulli', id: 'LIST' },
       ],
     }),
+
+    createMonthlyPayment: builder.mutation({
+      query: ({ musulliId, ...payload }: { musulliId: string } & CreateMonthlyPaymentPayload) => ({
+        url: `/musullis/${musulliId}/monthly-payment`,
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: (result: any, error: any, { musulliId }: any) => [
+        { type: 'Musulli', id: musulliId },
+        { type: 'Musulli', id: 'LIST' },
+      ],
+    }),
+
+    getMusulliPaymentSummary: builder.query({
+      query: (musulliId: string) => ({
+        url: `/musullis/${musulliId}/payment-summary`,
+        method: 'GET',
+      }),
+      providesTags: (result: any, error: any, musulliId: string) => [{ type: 'Musulli', id: musulliId }],
+    }),
+
+    getMosquePaymentStats: builder.query({
+      query: () => ({
+        url: '/musullis/stats',
+        method: 'GET',
+      }),
+      providesTags: [{ type: 'Musulli', id: 'LIST' }],
+    }),
+
+    collectFee: builder.mutation({
+      query: (payload: CollectFeePayload) => ({
+        url: '/payments/collect',
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['Musulli'],
+    }),
+
+    getPaymentLogs: builder.query({
+      query: () => ({
+        url: '/paymentLogs',
+        method: 'GET',
+      }),
+      providesTags: [{ type: 'Musulli', id: 'LIST' }],
+    }),
   }),
 });
 
@@ -55,4 +112,9 @@ export const {
   useGetMusullisQuery,
   useGetSingleMusulliQuery,
   useUpdateMusulliMutation,
+  useCreateMonthlyPaymentMutation,
+  useGetMusulliPaymentSummaryQuery,
+  useGetMosquePaymentStatsQuery,
+  useCollectFeeMutation,
+  useGetPaymentLogsQuery,
 } = musulliApi;

@@ -6,9 +6,17 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useGetMyMosqueQuery } from "@/redux/features/mosqueSlice/mosqueSlice";
-import Image from "next/image";
-import { 
-  MapPin, Phone, Users, Plus, Building2, Calendar, Globe, UsersRound, ListTodo, ArrowRight } from "lucide-react";
+import {
+  MapPin,
+  Phone,
+  Building2,
+  Calendar,
+  Globe,
+  UsersRound,
+  ListTodo,
+  ArrowRight,
+  Plus,
+} from "lucide-react";
 
 export default function MyMosquePage() {
   const { data, isLoading, error } = useGetMyMosqueQuery();
@@ -20,7 +28,9 @@ export default function MyMosquePage() {
         {isLoading ? (
           <div className="text-center py-32">
             <div className="animate-spin w-12 h-12 border-4 border-[#8a7340] border-t-transparent rounded-full mx-auto mb-6"></div>
-            <p className="text-lg text-gray-600 font-medium">Loading your mosque dashboard...</p>
+            <p className="text-lg text-gray-600 font-medium">
+              Loading your mosque dashboard...
+            </p>
           </div>
         ) : error ? (
           <div className="text-center py-32 bg-red-50 rounded-3xl border border-red-200 max-w-md mx-auto">
@@ -37,7 +47,8 @@ export default function MyMosquePage() {
               No Mosque Found
             </h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              You haven&apos;t created a mosque yet. Create one to start managing your community.
+              You haven&apos;t created a mosque yet. Create one to start
+              managing your community.
             </p>
             <Link href="/create-mosque">
               <Button className="bg-gradient-to-r from-[#8a7340] to-[#c8a84b] hover:from-[#7a6330] hover:to-[#b8983b] text-white px-8 py-6 text-lg shadow-xl shadow-[#8a7340]/25 hover:-translate-y-1 transition-all">
@@ -51,7 +62,9 @@ export default function MyMosquePage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
-                <h1 className="text-4xl font-bold text-[#2c2416]">Mosque Dashboard</h1>
+                <h1 className="text-4xl font-bold text-[#2c2416]">
+                  Mosque Dashboard
+                </h1>
                 <p className="text-gray-600 mt-2">Manage {mosque.name}</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
@@ -79,7 +92,9 @@ export default function MyMosquePage() {
                       <p className="text-4xl font-bold text-[#2c2416]">
                         {mosque._count?.musullis || 0}
                       </p>
-                      <p className="text-[#7a6330] font-medium mt-1">Total Musullis</p>
+                      <p className="text-[#7a6330] font-medium mt-1">
+                        Total Musullis
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -116,7 +131,7 @@ export default function MyMosquePage() {
                       <p className="text-[#7a6330] text-sm mt-1">Phone</p>
                     </div>
                   </div>
-                  </CardContent>
+                </CardContent>
               </Card>
 
               {/* Slug */}
@@ -149,8 +164,12 @@ export default function MyMosquePage() {
                           <ListTodo className="w-8 h-8 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-2xl font-bold text-[#2c2416]">Musulli List</h3>
-                          <p className="text-[#7a6330] mt-1">View all registered members</p>
+                          <h3 className="text-2xl font-bold text-[#2c2416]">
+                            Musulli List
+                          </h3>
+                          <p className="text-[#7a6330] mt-1">
+                            View all registered members
+                          </p>
                         </div>
                       </div>
                       <ArrowRight className="w-8 h-8 text-[#8a7340]" />
@@ -174,11 +193,16 @@ export default function MyMosquePage() {
                         Created At
                       </p>
                       <p className="text-[#2c2416] font-semibold text-lg">
-                        {mosque.createdAt ? new Date(mosque.createdAt).toLocaleDateString(undefined, {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        }) : "—"}
+                        {mosque.createdAt
+                          ? new Date(mosque.createdAt).toLocaleDateString(
+                              undefined,
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              },
+                            )
+                          : "—"}
                       </p>
                     </div>
                     <div className="bg-white rounded-xl p-6 border border-[#e8d99a]">
@@ -186,11 +210,16 @@ export default function MyMosquePage() {
                         Last Updated
                       </p>
                       <p className="text-[#2c2416] font-semibold text-lg">
-                        {mosque.updatedAt ? new Date(mosque.updatedAt).toLocaleDateString(undefined, {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        }) : "—"}
+                        {mosque.updatedAt
+                          ? new Date(mosque.updatedAt).toLocaleDateString(
+                              undefined,
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              },
+                            )
+                          : "—"}
                       </p>
                     </div>
                   </div>

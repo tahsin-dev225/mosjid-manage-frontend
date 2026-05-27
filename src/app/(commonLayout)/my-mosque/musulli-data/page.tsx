@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,41 +13,34 @@ import {
   Phone,
   DollarSign,
   Calendar,
-  CheckCircle2,
-  XCircle,
   Edit,
-  Trash2,
+  CreditCard,
+  MapPin,
 } from "lucide-react";
 import type { Musulli } from "@/types/musulliType";
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 export default function MusulliDataPage() {
   const { data, isLoading, error } = useGetMusullisQuery();
   const [searchQuery, setSearchQuery] = useState("");
+  console.log(data);
 
-  const musullis: Musulli[] = (data as any)?.data || [];
-
-  console.log(musullis);
+  const musullis: Musulli[] = data?.data || [];
 
   const filteredMusullis = musullis.filter(
     (musulli) =>
       musulli.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      musulli.phone.toString().includes(searchQuery),
+      musulli.phone.includes(searchQuery) ||
+      (musulli.address &&
+        musulli.address.toLowerCase().includes(searchQuery.toLowerCase())),
   );
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#f5f3ef] py-12 px-4 sm:px-6 lg:px-8">
@@ -144,13 +136,19 @@ export default function MusulliDataPage() {
                         Phone
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
+                        Address
+                      </th>
+                      <th className="px-8 py-4 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
                         Monthly Fee
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
-                        Start Date
+                        Due Amount
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
-                        Status
+                        Paid Months
+                      </th>
+                      <th className="px-8 py-4 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
+                        Joined At
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
                         Actions
@@ -172,9 +170,6 @@ export default function MusulliDataPage() {
                               <p className="text-[#2c2416] font-semibold text-lg">
                                 {musulli.name}
                               </p>
-                              <p className="text-gray-500 text-sm">
-                                ID: {musulli.id.slice(0, 8)}...
-                              </p>
                             </div>
                           </div>
                         </td>
@@ -188,6 +183,14 @@ export default function MusulliDataPage() {
                         </td>
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-[#8a7340]" />
+                            <span className="text-[#2c2416] font-medium">
+                              {musulli.address}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
                             <DollarSign className="w-4 h-4 text-[#8a7340]" />
                             <span className="text-[#2c2416] font-semibold text-lg">
                               ৳{musulli.monthlyFee}
@@ -196,44 +199,52 @@ export default function MusulliDataPage() {
                         </td>
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-[#8a7340]" />
-                            <span className="text-[#2c2416] font-medium">
-                              {months[musulli.startMonth - 1]}{" "}
-                              {musulli.startYear}
+                            <DollarSign className="w-4 h-4 text-orange-500" />
+                            <span
+                              className={`font-semibold text-lg ${musulli.dueAmount > 0 ? "text-orange-600" : "text-green-600"}`}
+                            >
+                              ৳{musulli.dueAmount}
                             </span>
                           </div>
                         </td>
                         <td className="px-8 py-6">
-                          {musulli.isActive ? (
-                            <div className="flex items-center gap-2">
-                              <CheckCircle2 className="w-5 h-5 text-green-500" />
-                              <span className="text-green-600 font-semibold">
-                                Active
-                              </span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <XCircle className="w-5 h-5 text-red-500" />
-                              <span className="text-red-600 font-semibold">
-                                Inactive
-                              </span>
-                            </div>
-                          )}
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-[#8a7340]" />
+                            <span className="text-[#2c2416] font-semibold">
+                              {musulli.paidMonths}/{musulli.totalMonths}
+                            </span>
+                          </div>
                         </td>
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              className="p-2 hover:bg-[#fdf8ed] text-[#8a7340]"
+                            <Calendar className="w-4 h-4 text-[#8a7340]" />
+                            <span className="text-[#2c2416] font-medium">
+                              {formatDate(musulli.joinedAt)}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
+                            <Link
+                              href={`/my-mosque/musulli-data/${musulli.id}/payments`}
                             >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              className="p-2 hover:bg-red-50 text-red-600"
+                              <Button
+                                variant="ghost"
+                                className="p-2 hover:bg-[#fdf8ed] text-[#8a7340]"
+                              >
+                                <CreditCard className="w-4 h-4" />
+                              </Button>
+                            </Link>
+                            <Link
+                              href={`/my-mosque/musulli-data/${musulli.id}/edit`}
                             >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                              <Button
+                                variant="ghost"
+                                className="p-2 hover:bg-[#fdf8ed] text-[#8a7340]"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                            </Link>
                           </div>
                         </td>
                       </tr>
