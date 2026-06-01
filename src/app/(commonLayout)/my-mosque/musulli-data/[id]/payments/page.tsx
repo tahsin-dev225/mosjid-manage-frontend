@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useGetSingleMusulliQuery, useCollectFeeMutation } from "@/redux/features/musulliSlice/musulliSlice";
@@ -10,23 +10,22 @@ import type { CollectFeePayload } from "@/types/musulliType";
 import type { ApiError } from "@/types/errorType";
 import {
   ArrowLeft,
-  User,
   Phone,
   DollarSign,
   CheckCircle2,
   XCircle,
   Coins,
   Calendar,
-  FileText,
   Save,
+  Clock,
+  FileText,
 } from "lucide-react";
 
 export default function MusulliPaymentsPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
 
-  const { data: musulliData, isLoading: isLoadingMusulli, error: musulliError } = useGetSingleMusulliQuery(id);
+  const { data: musulliData, isLoading: isLoadingMusulli, error: musulliError, refetch } = useGetSingleMusulliQuery(id);
   const [collectFee, { isLoading: isCollecting }] = useCollectFeeMutation();
 
   const [showCollectModal, setShowCollectModal] = useState(false);
@@ -49,6 +48,14 @@ export default function MusulliPaymentsPage() {
     });
   };
 
+  const formatMonthYear = (monthYear: string) => {
+    const [year, month] = monthYear.split("-");
+    return new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+    });
+  };
+
   const handleCollectChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     setCollectForm((prev) => ({
@@ -64,6 +71,7 @@ export default function MusulliPaymentsPage() {
       await collectFee(collectForm).unwrap();
       setShowSuccess(true);
       setShowCollectModal(false);
+      await refetch();
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err: unknown) {
       const apiError = err as { data?: ApiError };
@@ -104,7 +112,7 @@ export default function MusulliPaymentsPage() {
 
   return (
     <div className="min-h-screen bg-[#f5f3ef] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div className="flex items-center gap-4">
@@ -157,71 +165,156 @@ export default function MusulliPaymentsPage() {
           </div>
         )}
 
-        {/* Musulli Info Card */}
-        <Card className="border-none shadow-xl shadow-[#8a7340]/5 rounded-2xl mb-8 bg-gradient-to-br from-white to-[#fdf8ed]">
-          <CardHeader className="px-8 pt-8 pb-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#8a7340] to-[#c8a84b] flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                {musulli.name.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <CardTitle className="text-3xl text-[#2c2416] font-bold">
-                  {musulli.name}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Left Column - Musulli Info & Stats */}
+          <div className="lg:col-span-1 space-y-8">
+            {/* Musulli Info Card */}
+            <Card className="border-none shadow-xl shadow-[#8a7340]/5 rounded-2xl bg-gradient-to-br from-white to-[#fdf8ed]">
+              <CardHeader className="px-8 pt-8 pb-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#8a7340] to-[#c8a84b] flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                    {musulli.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl text-[#2c2416] font-bold">
+                      {musulli.name}
+                    </CardTitle>
+                    <p className="text-gray-500 text-lg flex items-center gap-2">
+                      <Phone className="w-4 h-4" /> {musulli.phone}
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="px-8 pb-8">
+                <div className="space-y-4">
+                  <div className="bg-white p-4 rounded-xl border border-[#e8d99a]">
+                    <p className="text-gray-500 text-sm font-medium">Monthly Fee</p>
+                    <p className="text-[#2c2416] text-xl font-bold">৳{musulli.monthlyFee}</p>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-green-200">
+                    <p className="text-gray-500 text-sm font-medium">Total Paid</p>
+                    <p className="text-green-700 text-xl font-bold">৳{musulli.totalPaid}</p>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-orange-200">
+                    <p className="text-gray-500 text-sm font-medium">Due Amount</p>
+                    <p className={`text-xl font-bold ${musulli.dueAmount > 0 ? "text-orange-700" : "text-green-700"}`}>
+                      ৳{musulli.dueAmount}
+                    </p>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-blue-200">
+                    <p className="text-gray-500 text-sm font-medium">Paid Months</p>
+                    <p className="text-blue-700 text-xl font-bold">
+                      {musulli.paidMonths}/{musulli.totalMonths}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Due Months Card */}
+            <Card className="border-none shadow-xl shadow-[#8a7340]/5 rounded-2xl bg-gradient-to-br from-white to-[#fdf8ed]">
+              <CardHeader className="px-8 pt-8 pb-4">
+                <CardTitle className="text-xl text-[#2c2416] font-bold flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-orange-500" />
+                  Due Months ({musulli.dueMonths.length})
                 </CardTitle>
-                <p className="text-gray-500 text-lg flex items-center gap-2">
-                  <Phone className="w-4 h-4" /> {musulli.phone}
-                </p>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="px-8 pb-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white p-5 rounded-xl border border-[#e8d99a] shadow-md hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#8a7340]/10 to-[#c8a84b]/10 flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-[#8a7340]" />
+              </CardHeader>
+              <CardContent className="px-8 pb-8">
+                {musulli.dueMonths.length === 0 ? (
+                  <div className="text-center py-6">
+                    <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-2" />
+                    <p className="text-gray-600">All payments up to date!</p>
                   </div>
-                  <p className="text-gray-500 text-sm font-medium">Monthly Fee</p>
-                </div>
-                <p className="text-[#2c2416] text-2xl font-bold">৳{musulli.monthlyFee}</p>
-              </div>
+                ) : (
+                  <div className="space-y-3">
+                    {musulli.dueMonths.map((month, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between bg-orange-50 border border-orange-200 px-4 py-3 rounded-xl"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-orange-500" />
+                          <span className="text-orange-800 font-medium">{formatMonthYear(month)}</span>
+                        </div>
+                        <span className="text-orange-600 font-bold">৳{musulli.monthlyFee}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
-              <div className="bg-white p-5 rounded-xl border border-green-200 shadow-md hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center">
-                    <Coins className="w-5 h-5 text-green-600" />
+          {/* Right Column - Payment Logs */}
+          <div className="lg:col-span-2">
+            <Card className="border-none shadow-xl shadow-[#8a7340]/5 rounded-2xl bg-gradient-to-br from-white to-[#fdf8ed] overflow-hidden">
+              <CardHeader className="px-8 pt-8 pb-4">
+                <CardTitle className="text-2xl text-[#2c2416] font-bold flex items-center gap-2">
+                  <FileText className="w-6 h-6 text-[#8a7340]" />
+                  Payment History ({musulli.paymentLogs.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-8 pb-8">
+                {musulli.paymentLogs.length === 0 ? (
+                  <div className="text-center py-10">
+                    <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500">No payment records yet</p>
                   </div>
-                  <p className="text-gray-500 text-sm font-medium">Total Paid</p>
-                </div>
-                <p className="text-green-700 text-2xl font-bold">৳{musulli.totalPaid}</p>
-              </div>
-
-              <div className="bg-white p-5 rounded-xl border border-orange-200 shadow-md hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-orange-600" />
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="bg-[#fdf8ed] border-b border-[#e8d99a]">
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
+                            Paid Month
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
+                            Amount
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
+                            Payment Date
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
+                            Note
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#e8d99a]">
+                        {[...musulli.paymentLogs].reverse().map((log) => (
+                          <tr key={log.id} className="hover:bg-[#fdf8ed]/50 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-green-500" />
+                                <span className="text-[#2c2416] font-medium">
+                                  {formatMonthYear(log.paidMonth.split('T')[0])}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-green-700 font-bold text-lg">
+                                ৳{log.amount}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-gray-600">
+                                {formatDate(log.paymentDate)}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-gray-500 text-sm">
+                                {log.note || "-"}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                  <p className="text-gray-500 text-sm font-medium">Due Amount</p>
-                </div>
-                <p className={`text-2xl font-bold ${musulli.dueAmount > 0 ? "text-orange-700" : "text-green-700"}`}>
-                  ৳{musulli.dueAmount}
-                </p>
-              </div>
-
-              <div className="bg-white p-5 rounded-xl border border-blue-200 shadow-md hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <p className="text-gray-500 text-sm font-medium">Paid Months</p>
-                </div>
-                <p className="text-blue-700 text-2xl font-bold">
-                  {musulli.paidMonths}/{musulli.totalMonths}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
         {/* Collect Fee Modal */}
         {showCollectModal && (

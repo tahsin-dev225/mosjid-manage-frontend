@@ -1,3 +1,13 @@
+export interface PaymentLog {
+  id: string;
+  musulliId: string;
+  amount: number;
+  paidMonth: string;
+  note?: string;
+  paymentDate: string;
+  createdAt: string;
+}
+
 export interface Musulli {
   id: string;
   mosqueId: string;
@@ -12,11 +22,13 @@ export interface Musulli {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  paymentLogs: PaymentLog[];
   totalMonths: number;
   expectedAmount: number;
   dueAmount: number;
   paidMonths: number;
   paidTill: string | null;
+  dueMonths: string[];
 }
 
 export interface CreateMusulliPayload {
