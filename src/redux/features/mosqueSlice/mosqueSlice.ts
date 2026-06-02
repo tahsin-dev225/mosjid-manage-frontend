@@ -16,6 +16,12 @@ interface Mosque {
   _count?: { musullis: number };
 }
 
+interface GetSingleMosqueResponse {
+  success: boolean;
+  message: string;
+  data: Mosque;
+}
+
 interface GetAllMosquesResponse {
   success: boolean;
   message: string;
@@ -50,7 +56,7 @@ export const mosqueApi = baseApi.injectEndpoints({
       invalidatesTags: ['Mosque', 'User'],
     }),
 
-    getMyMosque: builder.query<Mosque, void>({
+    getMyMosque: builder.query<GetSingleMosqueResponse, void>({
       query: () => ({
         url: '/mosques/my-mosque',
         method: 'GET',

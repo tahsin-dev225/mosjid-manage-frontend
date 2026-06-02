@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCreateMosqueMutation } from "@/redux/features/mosqueSlice/mosqueSlice";
+import type { ApiError } from "@/types/errorType";
 import { Upload } from "lucide-react";
 
 interface ICreateMosquePayload {
@@ -83,9 +84,10 @@ export default function CreateMosquePage() {
       await createMosque({ ...form, logo: base64Logo }).unwrap();
       setSuccess(true);
       setTimeout(() => router.push("/mosque"), 1500);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const apiError = err as { data?: ApiError };
       setError(
-        err?.data?.message || "Failed to create mosque. Please try again.",
+        apiError.data?.message || "Failed to create mosque. Please try again.",
       );
     }
   };

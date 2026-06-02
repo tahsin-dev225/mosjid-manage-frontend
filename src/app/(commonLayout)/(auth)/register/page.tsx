@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { useRegisterMutation } from "@/redux/features/authSlice/authSlice";
 import { baseApi, resetApiState } from "@/redux/features/apiSlice/apiSlice";
+import type { ApiError } from "@/types/errorType";
 
 interface IRegisterUserPayload {
   name: string;
@@ -51,8 +52,11 @@ export default function RegisterPage() {
       dispatch(baseApi.util.invalidateTags(["User"]));
       setSuccess(true);
       setTimeout(() => router.push("/"), 1500);
-    } catch (err: any) {
-      setError(err?.data?.message || "Registration failed. Please try again.");
+    } catch (err: unknown) {
+      const apiError = err as { data?: ApiError };
+      setError(
+        apiError.data?.message || "Registration failed. Please try again.",
+      );
     }
   };
 

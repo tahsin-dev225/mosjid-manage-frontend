@@ -20,7 +20,7 @@ import {
 
 export default function MyMosquePage() {
   const { data, isLoading, error } = useGetMyMosqueQuery();
-  const mosque = (data as any)?.data;
+  const mosque = data?.data;
 
   return (
     <div className="min-h-screen bg-[#f5f3ef] py-12 px-4 sm:px-6 lg:px-8">

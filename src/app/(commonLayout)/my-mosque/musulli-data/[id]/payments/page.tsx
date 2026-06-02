@@ -227,7 +227,7 @@ export default function MusulliPaymentsPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {musulli.dueMonths.map((month, index) => (
+                    {musulli.dueMonths.map((month: string, index: number) => (
                       <div
                         key={index}
                         className="flex items-center justify-between bg-orange-50 border border-orange-200 px-4 py-3 rounded-xl"

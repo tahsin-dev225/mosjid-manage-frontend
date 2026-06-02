@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "@/redux/features/authSlice/authSlice";
 import { baseApi } from "@/redux/features/apiSlice/apiSlice";
+import type { ApiError } from "@/types/errorType";
 
 interface ILoginPayload {
   email: string;
@@ -48,8 +49,10 @@ export default function LoginPage() {
 
       router.push("/");
     } catch (err: unknown) {
+      const apiError = err as { data?: ApiError };
       setError(
-        err?.data?.message || "Login failed. Please check your credentials.",
+        apiError.data?.message ||
+          "Login failed. Please check your credentials.",
       );
     }
   };
