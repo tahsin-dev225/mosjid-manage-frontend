@@ -51,7 +51,7 @@ export default function RegisterPage() {
       localStorage.setItem("refreshToken", refreshToken);
       dispatch(baseApi.util.invalidateTags(["User"]));
       setSuccess(true);
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(() => router.push("/mosque"), 1500);
     } catch (err: unknown) {
       const apiError = err as { data?: ApiError };
       setError(

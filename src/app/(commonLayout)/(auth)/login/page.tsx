@@ -46,8 +46,11 @@ export default function LoginPage() {
       dispatch(baseApi.util.invalidateTags(["User"]));
 
       setSuccess(true);
+      if (res.data.role === "MOSQUE_ADMIN") {
+        router.push("/my-mosque");
+      }
 
-      router.push("/");
+      router.push("/mosque");
     } catch (err: unknown) {
       const apiError = err as { data?: ApiError };
       setError(
