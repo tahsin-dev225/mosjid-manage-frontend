@@ -1,11 +1,14 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useGetSingleMusulliQuery, useCollectFeeMutation } from "@/redux/features/musulliSlice/musulliSlice";
+import {
+  useGetSingleMusulliQuery,
+  useCollectFeeMutation,
+} from "@/redux/features/musulliSlice/musulliSlice";
 import type { CollectFeePayload } from "@/types/musulliType";
 import type { ApiError } from "@/types/errorType";
 import {
@@ -25,14 +28,19 @@ export default function MusulliPaymentsPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const { data: musulliData, isLoading: isLoadingMusulli, error: musulliError, refetch } = useGetSingleMusulliQuery(id);
+  const {
+    data: musulliData,
+    isLoading: isLoadingMusulli,
+    error: musulliError,
+    refetch,
+  } = useGetSingleMusulliQuery(id);
   const [collectFee, { isLoading: isCollecting }] = useCollectFeeMutation();
 
   const [showCollectModal, setShowCollectModal] = useState(false);
   const [collectForm, setCollectForm] = useState<CollectFeePayload>({
     musulliId: id,
     amount: musulliData?.data?.monthlyFee || 0,
-    paidMonth: new Date().toISOString().split('T')[0],
+    paidMonth: new Date().toISOString().split("T")[0],
     note: "",
   });
   const [showSuccess, setShowSuccess] = useState(false);
@@ -50,13 +58,18 @@ export default function MusulliPaymentsPage() {
 
   const formatMonthYear = (monthYear: string) => {
     const [year, month] = monthYear.split("-");
-    return new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "long",
-    });
+    return new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString(
+      undefined,
+      {
+        year: "numeric",
+        month: "long",
+      },
+    );
   };
 
-  const handleCollectChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleCollectChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value, type } = e.target;
     setCollectForm((prev) => ({
       ...prev,
@@ -96,9 +109,12 @@ export default function MusulliPaymentsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f5f3ef]">
         <div className="text-center max-w-md">
-          <h2 className="text-2xl font-bold text-[#2c2416] mb-2">Musulli Not Found</h2>
+          <h2 className="text-2xl font-bold text-[#2c2416] mb-2">
+            Musulli Not Found
+          </h2>
           <p className="text-gray-600 mb-6">
-            The musulli you're trying to view doesn't exist or you don't have permission to access it.
+            The musulli youre trying to view doesnt exist or you dont have
+            permission to access it.
           </p>
           <Link href="/my-mosque/musulli-data">
             <button className="bg-[#8a7340] hover:bg-[#7a6330] text-white px-6 py-3 rounded-lg font-semibold">
@@ -125,7 +141,9 @@ export default function MusulliPaymentsPage() {
               <h1 className="text-4xl font-bold text-[#2c2416]">
                 Payment Management
               </h1>
-              <p className="text-gray-600 mt-2">Manage {musulli.name}'s payments</p>
+              <p className="text-gray-600 mt-2">
+                Manage {musulli.name} payments
+              </p>
             </div>
           </div>
           <Button
@@ -133,7 +151,7 @@ export default function MusulliPaymentsPage() {
               setCollectForm({
                 musulliId: id,
                 amount: musulli.monthlyFee,
-                paidMonth: new Date().toISOString().split('T')[0],
+                paidMonth: new Date().toISOString().split("T")[0],
                 note: "",
               });
               setShowCollectModal(true);
@@ -150,7 +168,9 @@ export default function MusulliPaymentsPage() {
           <div className="mb-8 px-6 py-4 bg-green-50 border border-green-200 rounded-2xl flex items-center gap-3 shadow-lg">
             <CheckCircle2 className="w-6 h-6 text-green-600" />
             <div>
-              <p className="text-green-800 font-semibold text-lg">Fee collected successfully!</p>
+              <p className="text-green-800 font-semibold text-lg">
+                Fee collected successfully!
+              </p>
             </div>
           </div>
         )}
@@ -188,25 +208,50 @@ export default function MusulliPaymentsPage() {
               <CardContent className="px-8 pb-8">
                 <div className="space-y-4">
                   <div className="bg-white p-4 rounded-xl border border-[#e8d99a]">
-                    <p className="text-gray-500 text-sm font-medium">Monthly Fee</p>
-                    <p className="text-[#2c2416] text-xl font-bold">৳{musulli.monthlyFee}</p>
+                    <p className="text-gray-500 text-sm font-medium">
+                      Monthly Fee
+                    </p>
+                    <p className="text-[#2c2416] text-xl font-bold">
+                      ৳{musulli.monthlyFee}
+                    </p>
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-green-200">
-                    <p className="text-gray-500 text-sm font-medium">Total Paid</p>
-                    <p className="text-green-700 text-xl font-bold">৳{musulli.totalPaid}</p>
+                    <p className="text-gray-500 text-sm font-medium">
+                      Total Paid
+                    </p>
+                    <p className="text-green-700 text-xl font-bold">
+                      ৳{musulli.totalPaid}
+                    </p>
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-orange-200">
-                    <p className="text-gray-500 text-sm font-medium">Due Amount</p>
-                    <p className={`text-xl font-bold ${musulli.dueAmount > 0 ? "text-orange-700" : "text-green-700"}`}>
+                    <p className="text-gray-500 text-sm font-medium">
+                      Due Amount
+                    </p>
+                    <p
+                      className={`text-xl font-bold ${musulli.dueAmount > 0 ? "text-orange-700" : "text-green-700"}`}
+                    >
                       ৳{musulli.dueAmount}
                     </p>
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-blue-200">
-                    <p className="text-gray-500 text-sm font-medium">Paid Months</p>
+                    <p className="text-gray-500 text-sm font-medium">
+                      Paid Months
+                    </p>
                     <p className="text-blue-700 text-xl font-bold">
                       {musulli.paidMonths}/{musulli.totalMonths}
                     </p>
                   </div>
+                  {/* prep */}
+                  {musulli?.totalMonths < musulli?.paidMonths && (
+                    <div className="bg-white p-4 rounded-xl border border-blue-200">
+                      <p className="text-gray-500 text-sm font-medium">
+                        Pre Paid Months
+                      </p>
+                      <p className="text-blue-700 text-xl font-bold">
+                        {musulli.paidMonths - musulli.totalMonths}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -234,9 +279,13 @@ export default function MusulliPaymentsPage() {
                       >
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-orange-500" />
-                          <span className="text-orange-800 font-medium">{formatMonthYear(month)}</span>
+                          <span className="text-orange-800 font-medium">
+                            {formatMonthYear(month)}
+                          </span>
                         </div>
-                        <span className="text-orange-600 font-bold">৳{musulli.monthlyFee}</span>
+                        <span className="text-orange-600 font-bold">
+                          ৳{musulli.monthlyFee}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -281,12 +330,15 @@ export default function MusulliPaymentsPage() {
                       </thead>
                       <tbody className="divide-y divide-[#e8d99a]">
                         {[...musulli.paymentLogs].reverse().map((log) => (
-                          <tr key={log.id} className="hover:bg-[#fdf8ed]/50 transition-colors">
+                          <tr
+                            key={log.id}
+                            className="hover:bg-[#fdf8ed]/50 transition-colors"
+                          >
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4 text-green-500" />
                                 <span className="text-[#2c2416] font-medium">
-                                  {formatMonthYear(log.paidMonth.split('T')[0])}
+                                  {formatMonthYear(log.paidMonth.split("T")[0])}
                                 </span>
                               </div>
                             </td>
