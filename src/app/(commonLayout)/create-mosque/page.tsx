@@ -83,7 +83,7 @@ export default function CreateMosquePage() {
 
       await createMosque({ ...form, logo: base64Logo }).unwrap();
       setSuccess(true);
-      setTimeout(() => router.push("/mosque"), 1500);
+      setTimeout(() => router.push("/my-mosque"), 1500);
     } catch (err: unknown) {
       const apiError = err as { data?: ApiError };
       setError(

@@ -51,7 +51,7 @@ export default function LoginPage() {
         return router.push("/my-mosque");
       }
 
-      router.push("/mosque");
+      router.push("/create-mosque");
     } catch (err: unknown) {
       const apiError = err as { data?: ApiError };
       setError(

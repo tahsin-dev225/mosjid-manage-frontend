@@ -14,7 +14,7 @@ interface IRegisterUserPayload {
   name: string;
   email: string;
   password: string;
-  phone: number;
+  phone: string;
 }
 
 export default function RegisterPage() {
@@ -26,7 +26,7 @@ export default function RegisterPage() {
     name: "",
     email: "",
     password: "",
-    phone: 0,
+    phone: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +37,7 @@ export default function RegisterPage() {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "phone" ? Number(value) : value,
+      [name]: value,
     }));
   };
 
@@ -51,7 +51,7 @@ export default function RegisterPage() {
       localStorage.setItem("refreshToken", refreshToken);
       dispatch(baseApi.util.invalidateTags(["User"]));
       setSuccess(true);
-      setTimeout(() => router.push("/mosque"), 1500);
+      setTimeout(() => router.push("/create-mosque"), 1500);
     } catch (err: unknown) {
       const apiError = err as { data?: ApiError };
       setError(
@@ -167,12 +167,12 @@ export default function RegisterPage() {
               </label>
               <input
                 id="register-phone"
-                type="tel"
+                type="number"
                 name="phone"
-                value={form.phone === 0 ? "" : form.phone}
+                value={form.phone}
                 onChange={handleChange}
                 required
-                placeholder="01700000000"
+                placeholder="1709300670"
                 className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-[#fafaf8] text-[#2c2416] placeholder-gray-400 text-sm focus:outline-none focus:border-[#c8a84b] focus:ring-2 focus:ring-[#c8a84b]/20 transition"
               />
             </div>
