@@ -93,9 +93,9 @@ export default function CreateMosquePage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#f5f3ef]">
+    <div className="min-h-screen bg-[#f5f3ef]">
       {/* Left: Form Panel */}
-      <div className="w-full md:w-[48%] flex items-center justify-center px-8 py-12 bg-white shadow-2xl z-10">
+      <div className="w-full  flex items-center justify-center px-8 py-12 bg-white shadow-2xl z-10">
         <div className="w-full max-w-[400px]">
           {/* Logo / Brand */}
           <div className="flex-shrink-0 my-5 rounded-lg flex items-center gap-4">
@@ -338,29 +338,6 @@ export default function CreateMosquePage() {
       </div>
 
       {/* Right: Mosque Image Panel */}
-      <div className="hidden md:flex md:w-[52%] relative overflow-hidden">
-        <Image
-          src="/mosque-bg.png"
-          alt="Mosque"
-          fill
-          className="object-cover"
-          priority
-        />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-        {/* Quote */}
-        <div className="absolute bottom-0 left-0 right-0 px-10 pb-12">
-          <blockquote className="text-white">
-            <p className="text-xl md:text-2xl font-light italic leading-relaxed mb-3 drop-shadow-lg">
-              &ldquo;The mosque is a place of peace and remembrance.&rdquo;
-            </p>
-            <footer className="text-sm text-white/70 font-medium tracking-wide">
-              — Islamic Wisdom
-            </footer>
-          </blockquote>
-        </div>
-      </div>
     </div>
   );
 }
