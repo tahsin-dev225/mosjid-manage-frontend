@@ -1,0 +1,33 @@
+"use client";
+
+import { useEffect } from "react";
+
+export default function PWARegister() {
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      "serviceWorker" in navigator
+    ) {
+      const handleLoad = () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((reg) => {
+            console.log("Service Worker registered successfully:", reg.scope);
+          })
+          .catch((err) => {
+            console.error("Service Worker registration failed:", err);
+          });
+      };
+
+      // Register after page loads completely
+      if (document.readyState === "complete") {
+        handleLoad();
+      } else {
+        window.addEventListener("load", handleLoad);
+        return () => window.removeEventListener("load", handleLoad);
+      }
+    }
+  }, []);
+
+  return null;
+}
