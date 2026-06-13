@@ -24,6 +24,9 @@ import {
   FileText,
 } from "lucide-react";
 
+// Simple fix — change the input value to empty string when amount is 0:
+// value={collectForm.amount === 0 ? "" : collectForm.amount}
+
 export default function MusulliPaymentsPage() {
   const params = useParams();
   const id = params.id as string;
@@ -39,9 +42,7 @@ export default function MusulliPaymentsPage() {
   const [showCollectModal, setShowCollectModal] = useState(false);
   const [collectForm, setCollectForm] = useState<CollectFeePayload>({
     musulliId: id,
-    amount: musulliData?.data?.monthlyFee || 0,
-    paidMonth: new Date().toISOString().split("T")[0],
-    note: "",
+    amount: 0,
   });
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,13 +68,11 @@ export default function MusulliPaymentsPage() {
     );
   };
 
-  const handleCollectChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleCollectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
     setCollectForm((prev) => ({
       ...prev,
-      [name]: type === "number" ? Number(value) : value,
+      [name]: type === "number" ? (value === "" ? 0 : Number(value)) : value,
     }));
   };
 
@@ -116,7 +115,7 @@ export default function MusulliPaymentsPage() {
             The musulli youre trying to view doesnt exist or you dont have
             permission to access it.
           </p>
-          <Link href="/my-mosque/musulli-data">
+          <Link href="/my-mosque">
             <button className="bg-[#8a7340] hover:bg-[#7a6330] text-white px-6 py-3 rounded-lg font-semibold">
               Back to Musulli List
             </button>
@@ -132,7 +131,7 @@ export default function MusulliPaymentsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div className="flex items-center gap-4">
-            <Link href="/my-mosque/musulli-data">
+            <Link href="/my-mosque">
               <Button variant="ghost" className="p-2 hover:bg-[#fdf8ed]">
                 <ArrowLeft className="w-6 h-6 text-[#8a7340]" />
               </Button>
@@ -142,7 +141,7 @@ export default function MusulliPaymentsPage() {
                 Payment Management
               </h1>
               <p className="text-gray-600 mt-2">
-                Manage {musulli.name} payments
+                Manage {musulli.name}s payments
               </p>
             </div>
           </div>
@@ -151,8 +150,6 @@ export default function MusulliPaymentsPage() {
               setCollectForm({
                 musulliId: id,
                 amount: musulli.monthlyFee,
-                paidMonth: new Date().toISOString().split("T")[0],
-                note: "",
               });
               setShowCollectModal(true);
             }}
@@ -283,9 +280,6 @@ export default function MusulliPaymentsPage() {
                             {formatMonthYear(month)}
                           </span>
                         </div>
-                        <span className="text-orange-600 font-bold">
-                          ৳{musulli.monthlyFee}
-                        </span>
                       </div>
                     ))}
                   </div>
@@ -300,11 +294,12 @@ export default function MusulliPaymentsPage() {
               <CardHeader className="px-8 pt-8 pb-4">
                 <CardTitle className="text-2xl text-[#2c2416] font-bold flex items-center gap-2">
                   <FileText className="w-6 h-6 text-[#8a7340]" />
-                  Payment History ({musulli.paymentLogs.length})
+                  Payment History{" "}
+                  {musulli.paymentLogs ? `(${musulli.paymentLogs.length})` : ""}
                 </CardTitle>
               </CardHeader>
               <CardContent className="px-8 pb-8">
-                {musulli.paymentLogs.length === 0 ? (
+                {!musulli.paymentLogs || musulli.paymentLogs.length === 0 ? (
                   <div className="text-center py-10">
                     <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                     <p className="text-gray-500">No payment records yet</p>
@@ -323,13 +318,10 @@ export default function MusulliPaymentsPage() {
                           <th className="px-6 py-3 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
                             Payment Date
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#7a6330] uppercase tracking-wider">
-                            Note
-                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#e8d99a]">
-                        {[...musulli.paymentLogs].reverse().map((log) => (
+                        {[...musulli.paymentLogs].map((log) => (
                           <tr
                             key={log.id}
                             className="hover:bg-[#fdf8ed]/50 transition-colors"
@@ -349,12 +341,7 @@ export default function MusulliPaymentsPage() {
                             </td>
                             <td className="px-6 py-4">
                               <span className="text-gray-600">
-                                {formatDate(log.paymentDate)}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4">
-                              <span className="text-gray-500 text-sm">
-                                {log.note || "-"}
+                                {formatDate(log.createdAt)}
                               </span>
                             </td>
                           </tr>
@@ -398,42 +385,14 @@ export default function MusulliPaymentsPage() {
                       <input
                         type="number"
                         name="amount"
-                        value={collectForm.amount}
+                        value={
+                          collectForm.amount === 0 ? "" : collectForm.amount
+                        }
                         onChange={handleCollectChange}
                         required
                         className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-[#2c2416] placeholder-gray-400 text-sm focus:outline-none focus:border-[#c8a84b] focus:ring-2 focus:ring-[#c8a84b]/20 transition"
                       />
                     </div>
-                  </div>
-
-                  {/* Paid Month */}
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
-                      Paid Month
-                    </label>
-                    <input
-                      type="date"
-                      name="paidMonth"
-                      value={collectForm.paidMonth}
-                      onChange={handleCollectChange}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-[#2c2416] placeholder-gray-400 text-sm focus:outline-none focus:border-[#c8a84b] focus:ring-2 focus:ring-[#c8a84b]/20 transition"
-                    />
-                  </div>
-
-                  {/* Note */}
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
-                      Note (Optional)
-                    </label>
-                    <textarea
-                      name="note"
-                      value={collectForm.note}
-                      onChange={handleCollectChange}
-                      rows={3}
-                      placeholder="e.g. May monthly fee"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-[#2c2416] placeholder-gray-400 text-sm focus:outline-none focus:border-[#c8a84b] focus:ring-2 focus:ring-[#c8a84b]/20 transition resize-none"
-                    />
                   </div>
 
                   {/* Buttons */}

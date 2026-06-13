@@ -18,11 +18,12 @@ export interface Musulli {
   image: string | null;
   monthlyFee: number;
   joinedAt: string;
+  lastPaidMonth: string | null;
   totalPaid: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  paymentLogs: PaymentLog[];
+  paymentLogs?: PaymentLog[];
   totalMonths: number;
   expectedAmount: number;
   dueAmount: number;
@@ -56,6 +57,4 @@ export interface UpdateMonthlyPaymentPayload {
 export interface CollectFeePayload {
   musulliId: string;
   amount: number;
-  paidMonth: string;
-  note?: string;
 }
