@@ -100,7 +100,7 @@ export default function EditMusulliPage() {
   return (
     <div className="min-h-screen flex bg-[#f5f3ef]">
       {/* Left: Form Panel */}
-      <div className="w-full md:w-[48%] flex items-center justify-center px-8 py-12 bg-white shadow-2xl z-10">
+      <div className="w-full md:w-[48%] flex items-center justify-center px-4 py-6 md:px-8 sm:py-12 bg-white shadow-2xl z-10">
         <div className="w-full max-w-[400px]">
           {/* Logo / Brand */}
           <div className="flex-shrink-0 my-5 rounded-lg flex items-center gap-4">

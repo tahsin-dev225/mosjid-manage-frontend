@@ -24,7 +24,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white hidden sm:block border-t border-gray-100 mt-auto">
+    <footer className="bg-white hidden md:block border-t border-gray-100 mt-auto">
       {/* Top gradient accent line */}
       <div className="h-0.5 w-full bg-gradient-to-r from-blue-600 via-blue-400 to-green-500" />
 

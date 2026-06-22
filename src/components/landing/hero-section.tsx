@@ -55,7 +55,7 @@ const HeroSection = () => {
       </section>
 
       {/* Overlapping Cards Container */}
-      <div className="absolute left-0 right-0 -bottom-24 px-4 sm:px-6 lg:px-8 z-20">
+      <div className="hidden md:block absolute left-0 right-0 -bottom-24 px-4 sm:px-6 lg:px-8 z-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {/* Card 1 */}
           <div className="bg-[#0f2c4a] rounded-2xl p-8 flex flex-col items-center justify-center text-center shadow-2xl border border-[#1a426b] transform transition-all duration-300 hover:-translate-y-2 hover:shadow-green-900/20 hover:border-green-500/50 group">

@@ -1,5 +1,6 @@
 import Footer from "@/components/shared/footer";
 import Navbar from "@/components/shared/navbar";
+import MobileNavbar from "@/components/shared/mobile-navbar";
 import React from "react";
 
 const CommonLayout = ({ children }: { children: React.ReactNode }) => {
@@ -7,6 +8,7 @@ const CommonLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <Navbar />
       {children}
+      <MobileNavbar />
       <Footer />
     </>
   );

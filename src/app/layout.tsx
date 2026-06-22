@@ -37,7 +37,7 @@ export default function RootLayout({
       lang="en"
       className={`${roboto.variable} h-full antialiased`}
     >
-      <body className={`${roboto.className} min-h-full flex flex-col`}>
+      <body className={`${roboto.className} min-h-full pb-10 md:pb-0 flex flex-col`}>
         <ReduxProvider>
           <PWARegister />
           {children}
