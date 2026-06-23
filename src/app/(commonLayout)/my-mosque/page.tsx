@@ -201,10 +201,10 @@ export default function MyMosquePage() {
                         <th className="px-2 py-3 md:px-8 md:py-6 text-left text-[#7a6330]  tracking-wider">
                           Member
                         </th>
-                        <th className="px-8 hidden md:block py-4 text-left text-[#7a6330]  tracking-wider">
+                        <th className="px-8 py-4 text-left text-[#7a6330]  tracking-wider">
                           Phone
                         </th>
-                        <th className="px-8 py-4 hidden md:block text-left text-[#7a6330]  tracking-wider">
+                        <th className="px-8 py-4  text-left text-[#7a6330]  tracking-wider">
                           Address
                         </th>
                         <th className="px-2 py-3 md:px-8 md:py-6 text-left text-[#7a6330]  tracking-wider">
@@ -213,10 +213,10 @@ export default function MyMosquePage() {
                         <th className="px-2 py-3 md:px-8 md:py-6 text-left text-[#7a6330]  tracking-wider">
                           Due Amount
                         </th>
-                        <th className="px-8 py-4 hidden md:block text-left text-[#7a6330]  tracking-wider">
+                        <th className="px-8 py-4 text-left text-[#7a6330]  tracking-wider">
                           Paid Months
                         </th>
-                        <th className="px-8 py-4 hidden md:block text-left text-[#7a6330]  tracking-wider">
+                        <th className="px-8 py-4  text-left text-[#7a6330]  tracking-wider">
                           Joined At
                         </th>
                         <th className="px-2 py-3 md:px-8 md:py-6 text-left text-[#7a6330]  tracking-wider">
@@ -232,7 +232,7 @@ export default function MyMosquePage() {
                         >
                           <td className="px-2 py-3 md:px-8 md:py-6">
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 md:block hidden rounded-full bg-gradient-to-br from-[#8a7340] to-[#c8a84b] flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#8a7340] to-[#c8a84b] flex items-center justify-center text-white font-bold text-lg shadow-lg">
                                 {musulli.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
@@ -242,7 +242,7 @@ export default function MyMosquePage() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-8 py-6 hidden md:block ">
+                          <td className="px-8 py-6 ">
                             <div className="flex items-center gap-2">
                               <Phone className="w-4 h-4 text-[#8a7340]" />
                               <span className="text-[#2c2416] font-medium">
@@ -250,7 +250,7 @@ export default function MyMosquePage() {
                               </span>
                             </div>
                           </td>
-                          <td className="px-8 py-6 hidden md:block ">
+                          <td className="px-8 py-6 ">
                             <div className="flex items-center gap-2">
                               <MapPin className="w-4 h-4 text-[#8a7340]" />
                               <span className="text-[#2c2416] font-medium">
@@ -278,7 +278,7 @@ export default function MyMosquePage() {
                               </span>
                             </div>
                           </td>
-                          <td className="px-8 py-6 hidden md:block ">
+                          <td className="px-8 py-6">
                             <div className="flex items-center gap-2">
                               <Calendar className="w-4 h-4 text-[#8a7340]" />
                               <span className="text-[#2c2416] font-semibold">
@@ -286,7 +286,7 @@ export default function MyMosquePage() {
                               </span>
                             </div>
                           </td>
-                          <td className="px-8 py-6 hidden md:block ">
+                          <td className="px-8 py-6 ">
                             <div className="flex items-center gap-2">
                               <Calendar className="w-4 h-4 text-[#8a7340]" />
                               <span className="text-[#2c2416] font-medium">
