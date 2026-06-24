@@ -100,29 +100,10 @@ export default function EditMusulliPage() {
   return (
     <div className="min-h-screen flex bg-[#f5f3ef]">
       {/* Left: Form Panel */}
-      <div className="w-full md:w-[48%] flex items-center justify-center px-4 py-6 md:px-8 sm:py-12 bg-white shadow-2xl z-10">
+      <div className="w-full flex items-center justify-center px-4 py-6 md:px-8 sm:py-12 bg-white shadow-2xl z-10">
         <div className="w-full max-w-[400px]">
           {/* Logo / Brand */}
-          <div className="flex-shrink-0 my-5 rounded-lg flex items-center gap-4">
-            <Link href="/" className="flex items-center">
-              <Image
-                className="w-10 rounded-md"
-                src="/img/logo.png"
-                alt="Logo"
-                width={200}
-                height={200}
-              />
-            </Link>
-            <div className="">
-              <h1 className="text-2xl font-semibold text-[#7A6330]">
-                Musulli{" "}
-                <span className="text-blue-800 dark:text-green-700">Track</span>
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-sky-700">
-                Digital Mosjid Management System
-              </p>
-            </div>
-          </div>
+          
 
           {/* Heading */}
           <h1 className="text-[2rem] font-bold text-[#2c2416] leading-tight mb-1">
@@ -226,21 +207,6 @@ export default function EditMusulliPage() {
               />
             </div>
 
-            {/* Joined At */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
-                Joined At
-              </label>
-              <input
-                type="date"
-                name="joinedAt"
-                value={form.joinedAt || ""}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-[#fafaf8] text-[#2c2416] placeholder-gray-400 text-sm focus:outline-none focus:border-[#c8a84b] focus:ring-2 focus:ring-[#c8a84b]/20 transition"
-              />
-            </div>
-
             {/* Submit */}
             <button
               type="submit"
@@ -293,31 +259,6 @@ export default function EditMusulliPage() {
         </div>
       </div>
 
-      {/* Right: Mosque Image Panel */}
-      <div className="hidden md:flex md:w-[52%] relative overflow-hidden">
-        <Image
-          src="/mosque-bg.png"
-          alt="Mosque"
-          fill
-          className="object-cover"
-          priority
-        />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-        {/* Quote */}
-        <div className="absolute bottom-0 left-0 right-0 px-10 pb-12">
-          <blockquote className="text-white">
-            <p className="text-xl md:text-2xl font-light italic leading-relaxed mb-3 drop-shadow-lg">
-              &ldquo;The Muslim community is like one body; if one part suffers,
-              all parts suffer.&rdquo;
-            </p>
-            <footer className="text-sm text-white/70 font-medium tracking-wide">
-              — Prophet Muhammad (PBUH)
-            </footer>
-          </blockquote>
-        </div>
-      </div>
     </div>
   );
 }
