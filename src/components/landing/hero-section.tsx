@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Users, FileText, HeartHandshake, Megaphone } from "lucide-react";
+import { useGetMeQuery } from "@/redux/features/authSlice/authSlice";
 
 const HeroSection = () => {
+  const { data: user } = useGetMeQuery();
   return (
     <div className="relative mb-32">
       <section className="relative w-full bg-[#E8F4F8] pt-16 pb-40 md:pt-24 md:pb-56 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-[2rem] sm:rounded-b-[3rem] shadow-sm">
@@ -31,12 +33,23 @@ const HeroSection = () => {
               >
                 Explore more
               </Link>
+              {user?.data?.role === "USER" && 
               <Link
                 href="/register"
                 className="w-full sm:w-auto px-8 py-2 hover:-translate-y-1 transition-all rounded-full bg-[#7A6330] text-white font-bold hover:bg-[#7A6330]/80 shadow-xl shadow-[#7A6330]/30 transition-all hover:-translate-y-1 text-center text-lg"
               >
                 Get Started
+              </Link> 
+              }
+              
+              {user?.data?.role === "MOSQUE_ADMIN" && 
+              <Link
+                href="/my-mosque"
+                className="w-full sm:w-auto px-8 py-2 hover:-translate-y-1 transition-all rounded-full bg-[#7A6330] text-white font-bold hover:bg-[#7A6330]/80 shadow-xl shadow-[#7A6330]/30 transition-all hover:-translate-y-1 text-center text-lg"
+              >
+                Get Started
               </Link>
+              }
             </div>
           </div>
 
